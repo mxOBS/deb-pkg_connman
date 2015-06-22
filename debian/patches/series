@@ -1,1 +1,2 @@
 01-init-script-lsb-headers.patch
+0001-wifi-Don-t-handle_tether-until-all-interfaces-are-re.patch

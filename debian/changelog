@@ -1,3 +1,10 @@
+connman (1.29-1imx1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add Patch by Jon Nettleton: only enable tethering after all interfaces are up
+
+ -- Josua Mayer <privacy@not.given>  Mon, 22 Jun 2015 20:33:15 +0800
+
 connman (1.29-1) unstable; urgency=medium
 
   * New upstream release (1.29) (Closes: #742408)

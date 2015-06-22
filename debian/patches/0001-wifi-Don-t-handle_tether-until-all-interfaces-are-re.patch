@@ -1,0 +1,43 @@
+From 7ede4b43495e2e758e83ab48b397751f9520ef94 Mon Sep 17 00:00:00 2001
+From: Jon Nettleton <jon.nettleton@gmail.com>
+Date: Mon, 22 Jun 2015 11:59:39 +0000
+Subject: [PATCH] wifi: Don't handle_tether until all interfaces are ready
+
+Calling handle_tether() only when IFF_LOWER_UP was set would
+cause the wifi device to be put in host mode, but fail to be
+added to the bridge.  Waiting until all the flags are set for
+the interface and IFF_RUNNING set allows the wifi device to
+properly be added to the bridge and allows tethering to work as
+expected.
+
+Signed-off-by: Jon Nettleton <jon.nettleton@gmail.com>
+---
+ plugins/wifi.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+--- a/plugins/wifi.c
++++ b/plugins/wifi.c
+@@ -714,14 +714,16 @@
+ 			DBG("interface down");
+ 	}
+ 
+-	if ((wifi->flags & IFF_LOWER_UP) != (flags & IFF_LOWER_UP)) {
+-		if (flags & IFF_LOWER_UP) {
+-			DBG("carrier on");
++        if ((wifi->flags & IFF_LOWER_UP) != (flags & IFF_LOWER_UP)) {
++                if (flags & IFF_UP)
++                        DBG("carrier on");
++                else
++                        DBG("carrier off");
++        }
+ 
+-			handle_tethering(wifi);
+-		} else
+-			DBG("carrier off");
+-	}
++        if ((wifi->flags & (IFF_UP | IFF_LOWER_UP)) &&
++            (flags & (IFF_UP | IFF_RUNNING | IFF_LOWER_UP)))
++                handle_tethering(wifi);
+ 
+ 	wifi->flags = flags;
+ }
